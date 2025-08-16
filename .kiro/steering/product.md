@@ -1,6 +1,6 @@
 # Product Overview
 
-**@kirbah/mcp-youtube** is a Model Context Protocol (MCP) server that provides high-efficiency YouTube data access for AI language models. The server is designed with token optimization as a core principle, returning lean, structured data to minimize LLM token consumption while maximizing functionality.
+**@klucas007/mcp-youtube** is a Model Context Protocol (MCP) server that provides high-efficiency YouTube data access for AI language models. The server is designed with token optimization as a core principle, returning lean, structured data to minimize LLM token consumption while maximizing functionality.
 
 ## Core Purpose
 - Enable AI models to seamlessly interact with YouTube through the YouTube Data API v3

@@ -1,32 +1,32 @@
-# YouTube Data MCP Server (@kirbah/mcp-youtube)
+# YouTube Data MCP Server (@klucas007/mcp-youtube)
 
 <!-- Badges Start -->
 <p align="left">
   <!-- GitHub Actions CI -->
-  <a href="https://github.com/kirbah/mcp-youtube/actions/workflows/ci.yml">
-    <img src="https://github.com/kirbah/mcp-youtube/actions/workflows/ci.yml/badge.svg" alt="CI Status" />
+  <a href="https://github.com/klucas007/mcp-youtube/actions/workflows/ci.yml">
+    <img src="https://github.com/klucas007/mcp-youtube/actions/workflows/ci.yml/badge.svg" alt="CI Status" />
   </a>
   <!-- Codecov -->
-  <a href="https://codecov.io/gh/kirbah/mcp-youtube">
-    <img src="https://codecov.io/gh/kirbah/mcp-youtube/branch/main/graph/badge.svg?token=Y6B2E0T82P" alt="Code Coverage"/>
+  <a href="https://codecov.io/gh/klucas007/mcp-youtube">
+    <img src="https://codecov.io/gh/klucas007/mcp-youtube/branch/main/graph/badge.svg?token=Y6B2E0T82P" alt="Code Coverage"/>
   </a>
   <!-- NPM Version -->
-  <a href="https://www.npmjs.com/package/@kirbah/mcp-youtube">
-    <img src="https://img.shields.io/npm/v/@kirbah/mcp-youtube.svg" alt="NPM Version" />
+  <a href="https://www.npmjs.com/package/@klucas007/mcp-youtube">
+    <img src="https://img.shields.io/npm/v/@klucas007/mcp-youtube.svg" alt="NPM Version" />
   </a>
   <!-- NPM Downloads -->
-  <a href="https://www.npmjs.com/package/@kirbah/mcp-youtube">
-    <img src="https://img.shields.io/npm/dt/@kirbah/mcp-youtube.svg" alt="NPM Downloads" />
+  <a href="https://www.npmjs.com/package/@klucas007/mcp-youtube">
+    <img src="https://img.shields.io/npm/dt/@klucas007/mcp-youtube.svg" alt="NPM Downloads" />
   </a>
   <!-- Node Version -->
   <a href="package.json">
-    <img src="https://img.shields.io/node/v/@kirbah/mcp-youtube.svg" alt="Node.js Version Support" />
+    <img src="https://img.shields.io/node/v/@klucas007/mcp-youtube.svg" alt="Node.js Version Support" />
   </a>
 </p>
 
 <p align="left">
-  <a href="https://smithery.ai/server/@kirbah/mcp-youtube">
-    <img src="https://smithery.ai/badge/@kirbah/mcp-youtube" alt="View on Smithery" />
+  <a href="https://smithery.ai/server/@klucas007/mcp-youtube">
+    <img src="https://smithery.ai/badge/@klucas007/mcp-youtube" alt="View on Smithery" />
   </a>
 </p>
 <!-- Badges End -->
@@ -37,7 +37,7 @@ This Model Context Protocol (MCP) server empowers AI language models to seamless
 
 ## Quick Start: Adding to an MCP Client
 
-The easiest way to use `@kirbah/mcp-youtube` is with an MCP-compatible client application (like Claude Desktop or a custom client).
+The easiest way to use `@klucas007/mcp-youtube` is with an MCP-compatible client application (like Claude Desktop or a custom client).
 
 1.  **Ensure you have a YouTube Data API v3 Key.**
     - If you don't have one, follow the [YouTube API Setup](#youtube-api-setup) instructions below.
@@ -58,7 +58,7 @@ The easiest way to use `@kirbah/mcp-youtube` is with an MCP-compatible client ap
       "mcpServers": {
         "youtube": {
           "command": "npx",
-          "args": ["-y", "@kirbah/mcp-youtube"],
+          "args": ["-y", "@klucas007/mcp-youtube"],
           "env": {
             "YOUTUBE_API_KEY": "YOUR_YOUTUBE_API_KEY_HERE"
           }
@@ -73,7 +73,7 @@ The easiest way to use `@kirbah/mcp-youtube` is with an MCP-compatible client ap
       "mcpServers": {
         "youtube": {
           "command": "npx",
-          "args": ["-y", "@kirbah/mcp-youtube"],
+          "args": ["-y", "@klucas007/mcp-youtube"],
           "env": {
             "YOUTUBE_API_KEY": "YOUR_YOUTUBE_API_KEY_HERE",
             "MDB_MCP_CONNECTION_STRING": "mongodb+srv://user:pass@cluster0.abc.mongodb.net/youtube_niche_analysis"
@@ -86,16 +86,16 @@ The easiest way to use `@kirbah/mcp-youtube` is with an MCP-compatible client ap
     - **Windows PowerShell Users:** `npx` can sometimes cause issues directly. If you encounter problems, try modifying the command as follows:
       ```json
         "command": "cmd",
-        "args": ["/k", "npx", "-y", "@kirbah/mcp-youtube"],
+        "args": ["/k", "npx", "-y", "@klucas007/mcp-youtube"],
       ```
 
 That's it! Your MCP client should now be able to leverage the YouTube tools provided by this server.
 
-## Why `@kirbah/mcp-youtube`?
+## Why `@klucas007/mcp-youtube`?
 
-In the world of Large Language Models, every token counts. `@kirbah/mcp-youtube` is designed from the ground up with this principle in mind:
+In the world of Large Language Models, every token counts. `@klucas007/mcp-youtube` is designed from the ground up with this principle in mind:
 
-- 🚀 **Token Efficiency:** Get just the data you need, precisely structured to minimize overhead for your LLM prompts and responses.
+- � ***Token Efficiency:** Get just the data you need, precisely structured to minimize overhead for your LLM prompts and responses.
 - 🧠 **LLM-Centric Design:** Tools and data formats are tailored for easy integration and consumption by AI models.
 - 📊 **Comprehensive YouTube Toolkit:** Access a wide array of YouTube functionalities, from video details and transcripts to channel statistics and trending content.
 - 🛡️ **Robust & Reliable:** Built with strong input validation (Zod) and clear error handling.
@@ -141,7 +141,7 @@ If you wish to contribute, modify the server, or run it locally outside of an MC
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/kirbah/mcp-youtube.git
+    git clone https://github.com/klucas007/mcp-youtube.git
     cd mcp-youtube
     ```
 

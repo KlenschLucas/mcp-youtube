@@ -59,6 +59,6 @@ npm test -- --coverage # Run tests with coverage report
 - Database name is hardcoded to `youtube_niche_analysis`
 
 ## Package Distribution
-- Published to npm as `@kirbah/mcp-youtube`
+- Published to npm as `@klucas007/mcp-youtube`
 - Executable via `npx` or direct installation
 - Binary entry point: `mcp-youtube` command

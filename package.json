@@ -1,5 +1,5 @@
 {
-  "name": "@kirbah/mcp-youtube",
+  "name": "@klucas007/mcp-youtube",
   "version": "0.2.0",
   "description": "High-efficiency YouTube MCP server: Get token-optimized, structured data for your LLMs using the YouTube Data API v3.",
   "main": "dist/index.js",
@@ -39,16 +39,16 @@
     "language-model",
     "tools"
   ],
-  "author": "Kiryl Bahdanau",
+  "author": "klucas007",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kirbah/mcp-youtube.git"
+    "url": "git+https://github.com/klucas007/mcp-youtube.git"
   },
   "bugs": {
-    "url": "https://github.com/kirbah/mcp-youtube/issues"
+    "url": "https://github.com/klucas007/mcp-youtube/issues"
   },
-  "homepage": "https://github.com/kirbah/mcp-youtube#readme",
+  "homepage": "https://github.com/klucas007/mcp-youtube#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
     "dotenv": "^17.2.1",
