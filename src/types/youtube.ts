@@ -170,3 +170,21 @@ export interface LeanPlaylistSearchResult {
   publishedAt: string | null | undefined;
   itemCount: number | null | undefined;
 }
+
+// Playlist management operation interfaces
+export interface CreatePlaylistOptions {
+  title: string;
+  description?: string;
+  privacyStatus?: "private" | "unlisted" | "public";
+  tags?: string[];
+  defaultLanguage?: string;
+}
+
+export interface UpdatePlaylistOptions {
+  playlistId: string;
+  title?: string;
+  description?: string;
+  privacyStatus?: "private" | "unlisted" | "public";
+  tags?: string[];
+  defaultLanguage?: string;
+}

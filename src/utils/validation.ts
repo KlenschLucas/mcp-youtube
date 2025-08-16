@@ -143,3 +143,13 @@ export const playlistItemManagementSchema = z.object({
   videoId: videoIdSchema,
   position: z.number().min(0).optional(),
 });
+
+// Playlist management validation schemas
+export const playlistPrivacySchema = z
+  .enum(["private", "unlisted", "public"])
+  .describe("Playlist privacy status");
+
+export const playlistTagsSchema = z
+  .array(z.string())
+  .optional()
+  .describe("Tags for the playlist");

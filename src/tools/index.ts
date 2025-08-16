@@ -53,6 +53,18 @@ import {
   getChannelPlaylistsConfig,
   getChannelPlaylistsHandler,
 } from "./playlist/getChannelPlaylists.js";
+import {
+  createPlaylistConfig,
+  createPlaylistHandler,
+} from "./playlist/createPlaylist.js";
+import {
+  updatePlaylistConfig,
+  updatePlaylistHandler,
+} from "./playlist/updatePlaylist.js";
+import {
+  deletePlaylistConfig,
+  deletePlaylistHandler,
+} from "./playlist/deletePlaylist.js";
 
 import { isEnabled } from "../utils/featureFlags.js";
 
@@ -147,6 +159,22 @@ export function allTools(container: IServiceContainer): ToolDefinition[] {
       config: getChannelPlaylistsConfig,
       handler: (params: { channelId: string } & ChannelPlaylistsOptions) =>
         getChannelPlaylistsHandler(params, playlistService),
+    },
+    // New playlist management tools
+    {
+      config: createPlaylistConfig,
+      handler: (params: any) =>
+        createPlaylistHandler(params, playlistService),
+    },
+    {
+      config: updatePlaylistConfig,
+      handler: (params: any) =>
+        updatePlaylistHandler(params, playlistService),
+    },
+    {
+      config: deletePlaylistConfig,
+      handler: (params: any) =>
+        deletePlaylistHandler(params, playlistService),
     },
   ];
 

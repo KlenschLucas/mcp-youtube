@@ -5,6 +5,8 @@ import type {
   LeanPlaylistDetails,
   LeanPlaylistItem,
   LeanPlaylistSearchResult,
+  CreatePlaylistOptions,
+  UpdatePlaylistOptions,
 } from "../types/youtube.js";
 import type {
   PlaylistItemsOptions,
@@ -18,6 +20,9 @@ const API_COSTS = {
   "playlistItems.list": 1,
   "search.list": 100,
   "videos.list": 1,
+  "playlists.insert": 50,
+  "playlists.update": 50,
+  "playlists.delete": 50,
 };
 
 export class PlaylistService {
@@ -371,6 +376,132 @@ export class PlaylistService {
       CACHE_TTLS.SEMI_STATIC,
       CACHE_COLLECTIONS.CHANNEL_PLAYLISTS,
       { channelId, ...options }
+    );
+  }
+
+  async createPlaylist(options: CreatePlaylistOptions): Promise<LeanPlaylistDetails> {
+    const operation = async (): Promise<LeanPlaylistDetails> => {
+      try {
+        const response = await this.trackCost(
+          () =>
+            this.youtube.playlists.insert({
+              part: ["snippet", "status"],
+              requestBody: {
+                snippet: {
+                  title: options.title,
+                  description: options.description,
+                  tags: options.tags,
+                  defaultLanguage: options.defaultLanguage,
+                },
+                status: {
+                  privacyStatus: options.privacyStatus || "private",
+                },
+              },
+            }),
+          API_COSTS["playlists.insert"]
+        );
+
+        const playlist = response.data;
+        return {
+          id: playlist.id,
+          title: playlist.snippet?.title,
+          description: playlist.snippet?.description,
+          channelId: playlist.snippet?.channelId,
+          channelTitle: playlist.snippet?.channelTitle,
+          publishedAt: playlist.snippet?.publishedAt,
+          itemCount: 0,
+          privacyStatus: playlist.status?.privacyStatus,
+        };
+      } catch (error) {
+        throw new Error(`YouTube API call for createPlaylist failed`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `create_playlist_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
+    );
+  }
+
+  async updatePlaylist(options: UpdatePlaylistOptions): Promise<LeanPlaylistDetails> {
+    const operation = async (): Promise<LeanPlaylistDetails> => {
+      try {
+        const requestBody: any = {};
+        
+        if (options.title || options.description || options.tags || options.defaultLanguage) {
+          requestBody.snippet = {
+            title: options.title,
+            description: options.description,
+            tags: options.tags,
+            defaultLanguage: options.defaultLanguage,
+          };
+        }
+        
+        if (options.privacyStatus) {
+          requestBody.status = {
+            privacyStatus: options.privacyStatus,
+          };
+        }
+
+        const response = await this.trackCost(
+          () =>
+            this.youtube.playlists.update({
+              part: ["snippet", "status"],
+              requestBody: {
+                id: options.playlistId,
+                ...requestBody,
+              },
+            }),
+          API_COSTS["playlists.update"]
+        );
+
+        const playlist = response.data;
+        return {
+          id: playlist.id,
+          title: playlist.snippet?.title,
+          description: playlist.snippet?.description,
+          channelId: playlist.snippet?.channelId,
+          channelTitle: playlist.snippet?.channelTitle,
+          publishedAt: playlist.snippet?.publishedAt,
+          itemCount: 0, // Will be updated when fetched
+          privacyStatus: playlist.status?.privacyStatus,
+        };
+      } catch (error) {
+        throw new Error(`YouTube API call for updatePlaylist failed for playlistId: ${options.playlistId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `update_playlist_${options.playlistId}_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
+    );
+  }
+
+  async deletePlaylist(playlistId: string): Promise<{ message: string }> {
+    const operation = async (): Promise<{ message: string }> => {
+      try {
+        await this.trackCost(
+          () =>
+            this.youtube.playlists.delete({
+              id: playlistId,
+            }),
+          API_COSTS["playlists.delete"]
+        );
+        return { message: "Playlist deleted successfully" };
+      } catch (error) {
+        throw new Error(`YouTube API call for deletePlaylist failed for playlistId: ${playlistId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `delete_playlist_${playlistId}_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
     );
   }
 }
