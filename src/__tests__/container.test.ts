@@ -12,6 +12,13 @@ describe("initializeContainer", () => {
   beforeEach(async () => {
     jest.resetModules(); // Reset modules before each test
 
+    // Reset the container singleton
+    const tempContainerModule = await import("../../src/container");
+    if (tempContainerModule && typeof tempContainerModule === 'object') {
+      // Reset the internal container variable
+      (tempContainerModule as any).container = null;
+    }
+
     // Set a temporary environment variable to prevent crashes if other modules
     // are re-initialized and call initializeContainer at module scope.
     process.env.MDB_MCP_CONNECTION_STRING = "temporary_dummy_string_for_reset";
@@ -115,13 +122,13 @@ describe("initializeContainer", () => {
     const sameContainer = await initializeContainer();
     expect(sameContainer).toBe(container); // Should be the same instance
 
-    // Initialization logic should not be called again
+    // Initialization logic should not be called again (container is cached)
     expect(mockConnectToDatabaseFn).toHaveBeenCalledTimes(1);
     expect(mockGetDbFn).toHaveBeenCalledTimes(1);
     expect(mockCacheServiceConstructorFn).toHaveBeenCalledTimes(1);
     expect(mockYoutubeServiceConstructorFn).toHaveBeenCalledTimes(1);
-    expect(mockTranscriptServiceConstructorFn).toHaveBeenCalledTimes(1); // Added
-    expect(mockPlaylistServiceConstructorFn).toHaveBeenCalledTimes(1); // Added
+    expect(mockTranscriptServiceConstructorFn).toHaveBeenCalledTimes(1);
+    expect(mockPlaylistServiceConstructorFn).toHaveBeenCalledTimes(1);
   });
 
   it("should throw an error if MDB_MCP_CONNECTION_STRING is not set", async () => {
