@@ -29,6 +29,7 @@ export async function initializeContainer(): Promise<IServiceContainer> {
     db = getDb();
   } catch (error) {
     // Database not available, using file cache
+    console.error("Database not available, using file cache");
     db = undefined;
   }
 
