@@ -91,6 +91,49 @@ The easiest way to use `@klucas007/mcp-youtube` is with an MCP-compatible client
 
 That's it! Your MCP client should now be able to leverage the YouTube tools provided by this server.
 
+## 🚀 Quick Install for Cursor
+
+**Cursor users can quickly set up this YouTube MCP server with just a few clicks!**
+
+### Method 1: One-click Install (Recommended)
+Click the button below to automatically configure this MCP server in Cursor:
+
+[![Install in Cursor](https://img.shields.io/badge/Install_in_Cursor-0.2.1-blue?style=for-the-badge&logo=cursor)](cursor://install-mcp?name=youtube&command=npx&args=-y,@klucas007/mcp-youtube&env.YOUTUBE_API_KEY=YOUR_API_KEY_HERE)
+
+### Method 2: Manual Configuration
+1. **Get your YouTube API key** (if you don't have one, follow the [YouTube API Setup](#youtube-api-setup) instructions below)
+2. Open Cursor
+3. Go to **Settings** → **Extensions** → **MCP Servers**
+4. Click **Add Server** and use this configuration:
+
+```json
+{
+  "name": "youtube",
+  "command": "npx",
+  "args": ["-y", "@klucas007/mcp-youtube"],
+  "env": {
+    "YOUTUBE_API_KEY": "YOUR_YOUTUBE_API_KEY_HERE"
+  }
+}
+```
+
+5. Replace `YOUR_YOUTUBE_API_KEY_HERE` with your actual YouTube API key
+6. Click **Save** and restart Cursor
+7. Start using YouTube tools in your AI conversations! 🎉
+
+### What you can do with YouTube MCP in Cursor:
+- 🔍 **Search videos** with advanced filters
+- 📊 **Get video details** and statistics
+- 📝 **Extract transcripts** for content analysis
+- 📈 **Analyze channels** and their performance
+- 🔥 **Discover trending content** by region
+- 🎥 **Manage playlists** and content organization
+
+### Troubleshooting
+- **"Command not found"**: Make sure you have Node.js installed (version 20+)
+- **"API key invalid"**: Verify your YouTube Data API v3 key is correct and has proper permissions
+- **"Server not responding"**: Try restarting Cursor after configuration
+
 ## Why `@klucas007/mcp-youtube`?
 
 In the world of Large Language Models, every token counts. `@klucas007/mcp-youtube` is designed from the ground up with this principle in mind:
