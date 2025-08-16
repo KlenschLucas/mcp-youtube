@@ -31,6 +31,7 @@ export const CACHE_TTLS = {
  * This helps in organizing data within MongoDB.
  */
 export const CACHE_COLLECTIONS = {
+  // Existing collections
   TRANSCRIPTS: "transcripts",
   VIDEO_DETAILS: "video_details",
   CHANNEL_TOP_VIDEOS: "channel_top_videos",
@@ -39,4 +40,30 @@ export const CACHE_COLLECTIONS = {
   VIDEO_CATEGORIES: "video_categories",
   CHANNEL_STATS: "channel_stats",
   TRENDING_VIDEOS: "trending_videos",
+  
+  // New collections for extended API endpoints
+  PLAYLIST_DETAILS: "playlist_details",
+  PLAYLIST_ITEMS: "playlist_items",
+  PLAYLIST_SEARCHES: "playlist_searches",
+  CHANNEL_PLAYLISTS: "channel_playlists",
+  
+  COMMENTS: "comments",
+  COMMENT_THREADS: "comment_threads",
+  COMMENT_REPLIES: "comment_replies",
+  
+  LIVE_BROADCASTS: "live_broadcasts",
+  UPCOMING_EVENTS: "upcoming_events",
+  LIVE_CHAT: "live_chat",
+  
+  SEARCH_CHANNELS: "search_channels",
+  SEARCH_LOCATION: "search_location",
+  SEARCH_DATE_RANGE: "search_date_range",
+  
+  SUBSCRIPTIONS: "subscriptions",
+  SUBSCRIPTION_STATUS: "subscription_status",
+  
+  VIDEO_ANALYTICS: "video_analytics",
+  CHANNEL_ANALYTICS: "channel_analytics",
+  
+  CONTENT_MANAGEMENT: "content_management",
 };
