@@ -1,13 +1,14 @@
 import "dotenv/config";
 import { Db } from "mongodb";
-import { connectToDatabase, getDb } from "./services/database.service.js";
-import { CacheService } from "./services/cache.service.js";
+import { getDb } from "./services/database.service.js";
+import { ICacheService } from "./services/cache/cache.interface.js";
+import { CacheFactory } from "./services/cache/cache.factory.js";
 import { YoutubeService } from "./services/youtube.service.js";
 import { TranscriptService } from "./services/transcript.service.js";
 
 export interface IServiceContainer {
-  db: Db;
-  cacheService: CacheService;
+  db?: Db;
+  cacheService: ICacheService;
   youtubeService: YoutubeService;
   transcriptService: TranscriptService;
 }
@@ -17,15 +18,18 @@ let container: IServiceContainer | null = null;
 export async function initializeContainer(): Promise<IServiceContainer> {
   if (container) return container;
 
-  if (!process.env.MDB_MCP_CONNECTION_STRING) {
-    throw new Error(
-      "MDB_MCP_CONNECTION_STRING is not set. Cannot connect to database."
-    );
+  // Use auto-detection to choose the best available cache service
+  const cacheService = await CacheFactory.createAutoCacheService();
+  
+  // Get database reference if MongoDB is being used
+  let db: Db | undefined;
+  try {
+    db = getDb();
+  } catch (error) {
+    // Database not available, using file cache
+    db = undefined;
   }
 
-  await connectToDatabase();
-  const db = getDb();
-  const cacheService = new CacheService(db);
   const youtubeService = new YoutubeService(cacheService);
   const transcriptService = new TranscriptService(cacheService);
 

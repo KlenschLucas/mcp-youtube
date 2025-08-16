@@ -1,5 +1,5 @@
 import { getSubtitles } from "youtube-caption-extractor";
-import { CacheService } from "./cache.service.js";
+import { ICacheService } from "./cache/cache.interface.js";
 import { CACHE_TTLS, CACHE_COLLECTIONS } from "../config/cache.config.js";
 
 interface Subtitle {
@@ -9,9 +9,9 @@ interface Subtitle {
 }
 
 export class TranscriptService {
-  private cacheService: CacheService;
+  private cacheService: ICacheService;
 
-  constructor(cacheService: CacheService) {
+  constructor(cacheService: ICacheService) {
     this.cacheService = cacheService;
   }
 

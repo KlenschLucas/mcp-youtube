@@ -107,8 +107,8 @@ export function allTools(container: IServiceContainer): ToolDefinition[] {
     },
   ];
 
-  // Add feature-flagged tools conditionally
-  if (isEnabled("toolFindConsistentOutlierChannels")) {
+  // Add feature-flagged tools conditionally (only if MongoDB is available)
+  if (isEnabled("toolFindConsistentOutlierChannels") && db) {
     toolDefinitions.push({
       config: findConsistentOutlierChannelsConfig,
       // This handler needs both services, and we provide them here.

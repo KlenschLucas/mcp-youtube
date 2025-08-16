@@ -1,6 +1,7 @@
 import { Db, Collection } from "mongodb";
 import { createHash } from "crypto";
 import { omitPaths } from "../utils/objectUtils.js";
+import { ICacheService } from "./cache/cache.interface.js";
 
 /**
  * A generic structure for entries in our new caching collections.
@@ -14,7 +15,7 @@ interface GenericCacheEntry<T> {
   params?: object; // Optional: The arguments used to generate this cache entry (for hashed keys).
 }
 
-export class CacheService {
+export class CacheService implements ICacheService {
   private db: Db;
   private readonly CACHE_COLLECTION_PREFIX = "yt_cache_"; // A prefix for all new generic cache collections.
 

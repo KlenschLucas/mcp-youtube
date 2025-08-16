@@ -17,6 +17,7 @@
     "start:client": "tsx ./src/index.ts",
     "dev": "tsx watch ./src/index.ts",
     "inspector": "npx @modelcontextprotocol/inspector tsx ./src/index.ts",
+    "cache": "tsx ./src/cli/cache-manager.ts",
     "build": "tsc",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",

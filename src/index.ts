@@ -44,14 +44,31 @@ async function main() {
 
 void main().catch((err) => {
   console.error("Error occurred during server execution:", err);
-  void disconnectFromDatabase().finally(() => process.exit(1));
+  void cleanup().finally(() => process.exit(1));
 });
 
 // Graceful shutdown handler
 const cleanup = async () => {
   console.error("Shutting down server...");
-  await disconnectFromDatabase();
-  console.error("Database disconnected. Exiting.");
+  
+  try {
+    // Get the container to access cache service
+    const container = await initializeContainer();
+    
+    // Clean up cache service
+    if (container.cacheService.cleanup) {
+      await container.cacheService.cleanup();
+    }
+    
+    // Try to disconnect from database if it was connected
+    await disconnectFromDatabase();
+    console.error("Database disconnected.");
+  } catch (error) {
+    // Database might not have been connected (using file cache)
+    console.error("Cleanup completed.");
+  }
+  
+  console.error("Exiting.");
   process.exit(0);
 };
 

@@ -5,7 +5,7 @@ import {
 } from "../utils/engagementCalculator.js";
 import { parseYouTubeNumber } from "../utils/numberParser.js";
 import { formatDescription } from "../utils/textUtils.js";
-import { CacheService } from "./cache.service.js";
+import { ICacheService } from "./cache/cache.interface.js";
 import { CACHE_TTLS, CACHE_COLLECTIONS } from "../config/cache.config.js";
 import type {
   LeanChannelStatistics,
@@ -61,12 +61,12 @@ const API_COSTS = {
 
 export class YoutubeService {
   private youtube: youtube_v3.Youtube;
-  private cacheService: CacheService;
+  private cacheService: ICacheService;
   private readonly MAX_RESULTS_PER_PAGE = 50;
   private readonly ABSOLUTE_MAX_RESULTS = 500;
   private apiCreditsUsed: number = 0;
 
-  constructor(cacheService: CacheService) {
+  constructor(cacheService: ICacheService) {
     this.cacheService = cacheService;
     this.youtube = google.youtube({
       version: "v3",

@@ -17,7 +17,7 @@ export async function connectToDatabase(): Promise<void> {
     db = mongoClient.db(DATABASE_NAME);
   } catch (error) {
     throw new Error(
-      `MDB_MCP_CONNECTION_STRING environment variable is required`,
+      `Failed to connect to MongoDB: ${error instanceof Error ? error.message : 'Unknown error'}`,
       { cause: error }
     );
   }

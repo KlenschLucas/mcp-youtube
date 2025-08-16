@@ -87,3 +87,6 @@ Thumbs.db
 # Test coverage
 coverage/ 
 test-results/
+
+# Cache directories
+.cache/

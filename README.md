@@ -42,13 +42,32 @@ The easiest way to use `@kirbah/mcp-youtube` is with an MCP-compatible client ap
 1.  **Ensure you have a YouTube Data API v3 Key.**
     - If you don't have one, follow the [YouTube API Setup](#youtube-api-setup) instructions below.
 
-2.  **MongoDB Connection String:** This server uses MongoDB to cache API responses and store analysis data, which significantly improves performance and reduces API quota usage. You can get a free MongoDB Atlas cluster to obtain a connection string.
+2.  **Caching Options:** This server supports two caching modes to improve performance and reduce API quota usage:
+    
+    - **File Cache (Default):** Uses local file-based caching in `.cache/youtube/` directory. No additional setup required.
+    - **MongoDB Cache (Optional):** Uses MongoDB for caching, which provides better performance for high-volume usage. Get a free MongoDB Atlas cluster to obtain a connection string.
 
-    **Important:** The server is hardcoded to use the database name `youtube_niche_analysis`. Your connection string must point to this database, and your user must have read/write permissions for it.
+    **Note:** If using MongoDB, the server uses the database name `youtube_niche_analysis`. Your connection string user must have read/write permissions for this database.
 
 3.  **Configure your MCP client:**
-    Add the following JSON configuration to your client, replacing `"YOUR_YOUTUBE_API_KEY_HERE"` with your actual API key.
+    Add one of the following JSON configurations to your client, replacing `"YOUR_YOUTUBE_API_KEY_HERE"` with your actual API key.
 
+    **Option A: File Cache (Recommended for most users):**
+    ```json
+    {
+      "mcpServers": {
+        "youtube": {
+          "command": "npx",
+          "args": ["-y", "@kirbah/mcp-youtube"],
+          "env": {
+            "YOUTUBE_API_KEY": "YOUR_YOUTUBE_API_KEY_HERE"
+          }
+        }
+      }
+    }
+    ```
+
+    **Option B: MongoDB Cache (For high-volume usage):**
     ```json
     {
       "mcpServers": {
@@ -137,11 +156,13 @@ If you wish to contribute, modify the server, or run it locally outside of an MC
     ```bash
     cp .env.example .env
     ```
-    Then, edit `.env` to add your `YOUTUBE_API_KEY`:
+    Then, edit `.env` to add your `YOUTUBE_API_KEY` (required):
     ```
     YOUTUBE_API_KEY=your_youtube_api_key_here
-    MDB_MCP_CONNECTION_STRING=your_mongodb_connection_string_here
+    # MDB_MCP_CONNECTION_STRING=your_mongodb_connection_string_here  # Optional
     ```
+    
+    **Note:** MongoDB connection string is optional. If not provided, the server will use local file-based caching.
 
 ### Development Scripts
 
@@ -164,6 +185,11 @@ npm run test -- --coverage # To generate coverage reports
 
 # Inspect MCP server using the Model Context Protocol Inspector
 npm run inspector
+
+# Cache management utilities
+npm run cache stats  # Show cache statistics
+npm run cache clean  # Clean expired cache files
+npm run cache test   # Test cache functionality
 ```
 
 ### Local Development with an MCP Client
