@@ -285,7 +285,7 @@ export class PlaylistService {
           channelId: playlist.snippet?.channelId,
           channelTitle: playlist.snippet?.channelTitle,
           publishedAt: playlist.snippet?.publishedAt,
-          itemCount: parseYouTubeNumber(playlist.contentDetails?.itemCount),
+          itemCount: playlist.contentDetails?.itemCount || 0,
         }));
       } catch (error) {
         throw new Error(`YouTube API call for searchPlaylists failed`, {
@@ -354,7 +354,7 @@ export class PlaylistService {
           channelId: playlist.snippet?.channelId,
           channelTitle: playlist.snippet?.channelTitle,
           publishedAt: playlist.snippet?.publishedAt,
-          itemCount: parseYouTubeNumber(playlist.contentDetails?.itemCount),
+          itemCount: playlist.contentDetails?.itemCount || 0,
           privacyStatus: playlist.status?.privacyStatus,
         }));
       } catch (error) {
