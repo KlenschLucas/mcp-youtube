@@ -153,3 +153,27 @@ export const playlistTagsSchema = z
   .array(z.string())
   .optional()
   .describe("Tags for the playlist");
+
+// Phase 2: Playlist item management validation schemas
+export const playlistItemIdSchema = z
+  .string()
+  .min(1, "Playlist item ID cannot be empty")
+  .describe("YouTube playlist item ID");
+
+export const addPlaylistItemSchema = z.object({
+  playlistId: playlistIdSchema,
+  videoId: videoIdSchema,
+  position: z.number().min(0).optional().describe("Position in playlist (0-based, optional)"),
+  note: z.string().optional().describe("Note to add with the playlist item"),
+});
+
+export const removePlaylistItemSchema = z.object({
+  playlistItemId: playlistItemIdSchema,
+});
+
+export const reorderPlaylistItemsSchema = z.object({
+  playlistId: playlistIdSchema,
+  playlistItemId: playlistItemIdSchema,
+  moveAfterId: z.string().optional().describe("Move item after this playlist item ID (optional)"),
+  moveBeforeId: z.string().optional().describe("Move item before this playlist item ID (optional)"),
+});

@@ -188,3 +188,18 @@ export interface UpdatePlaylistOptions {
   tags?: string[];
   defaultLanguage?: string;
 }
+
+// Phase 2: Playlist item management interfaces
+export interface AddPlaylistItemOptions {
+  playlistId: string;
+  videoId: string;
+  position?: number;
+  note?: string;
+}
+
+export interface ReorderPlaylistItemsOptions {
+  playlistId: string;
+  playlistItemId: string;
+  moveAfterId?: string;
+  moveBeforeId?: string;
+}

@@ -65,6 +65,18 @@ import {
   deletePlaylistConfig,
   deletePlaylistHandler,
 } from "./playlist/deletePlaylist.js";
+import {
+  addPlaylistItemConfig,
+  addPlaylistItemHandler,
+} from "./playlist/addPlaylistItem.js";
+import {
+  removePlaylistItemConfig,
+  removePlaylistItemHandler,
+} from "./playlist/removePlaylistItem.js";
+import {
+  reorderPlaylistItemsConfig,
+  reorderPlaylistItemsHandler,
+} from "./playlist/reorderPlaylistItems.js";
 
 import { isEnabled } from "../utils/featureFlags.js";
 
@@ -175,6 +187,22 @@ export function allTools(container: IServiceContainer): ToolDefinition[] {
       config: deletePlaylistConfig,
       handler: (params: any) =>
         deletePlaylistHandler(params, playlistService),
+    },
+    // Phase 2: Playlist item management tools
+    {
+      config: addPlaylistItemConfig,
+      handler: (params: any) =>
+        addPlaylistItemHandler(params, playlistService),
+    },
+    {
+      config: removePlaylistItemConfig,
+      handler: (params: any) =>
+        removePlaylistItemHandler(params, playlistService),
+    },
+    {
+      config: reorderPlaylistItemsConfig,
+      handler: (params: any) =>
+        reorderPlaylistItemsHandler(params, playlistService),
     },
   ];
 

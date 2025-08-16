@@ -23,6 +23,9 @@ const API_COSTS = {
   "playlists.insert": 50,
   "playlists.update": 50,
   "playlists.delete": 50,
+  "playlistItems.insert": 50,
+  "playlistItems.delete": 50,
+  "playlistItems.update": 50,
 };
 
 export class PlaylistService {
@@ -499,6 +502,138 @@ export class PlaylistService {
 
     return this.cacheService.getOrSet(
       `delete_playlist_${playlistId}_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
+    );
+  }
+
+  async addPlaylistItem(options: {
+    playlistId: string;
+    videoId: string;
+    position?: number;
+    note?: string;
+  }): Promise<LeanPlaylistItem> {
+    const operation = async (): Promise<LeanPlaylistItem> => {
+      try {
+        const requestBody: any = {
+          snippet: {
+            playlistId: options.playlistId,
+            resourceId: {
+              kind: "youtube#video",
+              videoId: options.videoId,
+            },
+          },
+        };
+
+        if (options.position !== undefined) {
+          requestBody.snippet.position = options.position;
+        }
+
+        if (options.note) {
+          requestBody.snippet.note = options.note;
+        }
+
+        const response = await this.trackCost(
+          () =>
+            this.youtube.playlistItems.insert({
+              part: ["snippet", "contentDetails"],
+              requestBody,
+            }),
+          API_COSTS["playlistItems.insert"]
+        );
+
+        const playlistItem = response.data;
+        return {
+          videoId: playlistItem.contentDetails?.videoId,
+          title: playlistItem.snippet?.title,
+          channelTitle: playlistItem.snippet?.videoOwnerChannelTitle,
+          position: parseYouTubeNumber(playlistItem.snippet?.position?.toString()),
+          publishedAt: playlistItem.snippet?.publishedAt,
+          duration: null, // Will be fetched separately if needed
+        };
+      } catch (error) {
+        throw new Error(`YouTube API call for addPlaylistItem failed for playlistId: ${options.playlistId}, videoId: ${options.videoId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `add_playlist_item_${options.playlistId}_${options.videoId}_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
+    );
+  }
+
+  async removePlaylistItem(playlistItemId: string): Promise<{ message: string }> {
+    const operation = async (): Promise<{ message: string }> => {
+      try {
+        await this.trackCost(
+          () =>
+            this.youtube.playlistItems.delete({
+              id: playlistItemId,
+            }),
+          API_COSTS["playlistItems.delete"]
+        );
+        return { message: "Playlist item removed successfully" };
+      } catch (error) {
+        throw new Error(`YouTube API call for removePlaylistItem failed for playlistItemId: ${playlistItemId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `remove_playlist_item_${playlistItemId}_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
+    );
+  }
+
+  async reorderPlaylistItems(options: {
+    playlistId: string;
+    playlistItemId: string;
+    moveAfterId?: string;
+    moveBeforeId?: string;
+  }): Promise<LeanPlaylistItem> {
+    const operation = async (): Promise<LeanPlaylistItem> => {
+      try {
+        const requestBody: any = {
+          id: options.playlistItemId,
+        };
+
+        if (options.moveAfterId) {
+          requestBody.moveAfterId = options.moveAfterId;
+        }
+
+        if (options.moveBeforeId) {
+          requestBody.moveBeforeId = options.moveBeforeId;
+        }
+
+        const response = await this.trackCost(
+          () =>
+            this.youtube.playlistItems.update({
+              part: ["snippet", "contentDetails"],
+              requestBody,
+            }),
+          API_COSTS["playlistItems.update"]
+        );
+
+        const playlistItem = response.data;
+        return {
+          videoId: playlistItem.contentDetails?.videoId,
+          title: playlistItem.snippet?.title,
+          channelTitle: playlistItem.snippet?.videoOwnerChannelTitle,
+          position: parseYouTubeNumber(playlistItem.snippet?.position?.toString()),
+          publishedAt: playlistItem.snippet?.publishedAt,
+          duration: null, // Will be fetched separately if needed
+        };
+      } catch (error) {
+        throw new Error(`YouTube API call for reorderPlaylistItems failed for playlistId: ${options.playlistId}, playlistItemId: ${options.playlistItemId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `reorder_playlist_items_${options.playlistId}_${options.playlistItemId}_${Date.now()}`,
       operation,
       CACHE_TTLS.DYNAMIC,
       CACHE_COLLECTIONS.CONTENT_MANAGEMENT
