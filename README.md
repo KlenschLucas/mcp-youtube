@@ -112,19 +112,52 @@ In the world of Large Language Models, every token counts. `@klucas007/mcp-youtu
 
 The server provides the following MCP tools, each designed to return token-optimized data:
 
+### Video Tools
+
 | Tool Name              | Description                                                                                                                                  | Parameters (see details in tool schema)                                                                               |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `getVideoDetails`      | Retrieves detailed, **lean** information for multiple YouTube videos including metadata, statistics, engagement ratios, and content details. | `videoIds` (array of strings)                                                                                         |
-| `searchVideos`         | Searches for videos or channels based on a query string with various filtering options, returning **concise** results.                       | `query` (string), `maxResults` (optional number), `order` (optional), `type` (optional), `channelId` (optional), etc. |
-| `getTranscripts`       | Retrieves **token-efficient** transcripts (captions) for multiple videos.                                                                    | `videoIds` (array of strings), `lang` (optional string for language code)                                             |
+| `getVideoDetails`      | Retrieves detailed, **lean** information for multiple YouTube videos including metadata, statistics, engagement ratios, and content details. | `videoIds` (array of strings), `includeTags` (optional boolean), `descriptionDetail` (optional: "NONE", "SNIPPET", "LONG") |
+| `searchVideos`         | Searches for videos or channels based on a query string with various filtering options, returning **concise** results.                       | `query` (string), `maxResults` (optional number), `order` (optional), `type` (optional), `channelId` (optional), `videoDuration` (optional), `recency` (optional), `regionCode` (optional) |
+| `getTranscripts`       | Retrieves **token-efficient** transcripts (captions) for multiple videos.                                                                    | `videoIds` (array of strings), `lang` (optional string for language code), `format` (optional: "full_text", "key_segments") |
+
+### Channel Tools
+
+| Tool Name              | Description                                                                                                                                  | Parameters (see details in tool schema)                                                                               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `getChannelStatistics` | Retrieves **lean** statistics for multiple channels (subscriber count, view count, video count, creation date).                              | `channelIds` (array of strings)                                                                                       |
-| `getChannelTopVideos`  | Retrieves a list of a channel's top-performing videos with **lean** details and engagement ratios.                                           | `channelId` (string), `maxResults` (optional number)                                                                  |
+| `getChannelTopVideos`  | Retrieves a list of a channel's top-performing videos with **lean** details and engagement ratios.                                           | `channelId` (string), `maxResults` (optional number), `includeTags` (optional boolean), `descriptionDetail` (optional: "NONE", "SNIPPET", "LONG") |
+
+### General Tools
+
+| Tool Name              | Description                                                                                                                                  | Parameters (see details in tool schema)                                                                               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `getTrendingVideos`    | Retrieves a list of trending videos for a given region and optional category, with **lean** details and engagement ratios.                   | `regionCode` (optional string), `categoryId` (optional string), `maxResults` (optional number)                        |
 | `getVideoCategories`   | Retrieves available YouTube video categories (ID and title) for a specific region, providing **essential data only**.                        | `regionCode` (optional string)                                                                                        |
+| `findConsistentOutlierChannels` | A powerful, high-cost discovery tool that finds emerging channels showing consistent, high-performance relative to their size within a specific topic and timeframe. | `query` (string), `channelAge` (optional: "NEW", "ESTABLISHED"), `consistencyLevel` (optional: "MODERATE", "HIGH"), `outlierMagnitude` (optional: "STANDARD", "STRONG"), `videoCategoryId` (optional string), `regionCode` (optional string), `maxResults` (optional number) |
+
+### Playlist Discovery Tools
+
+| Tool Name              | Description                                                                                                                                  | Parameters (see details in tool schema)                                                                               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `getPlaylistDetails`   | Get detailed information about a YouTube playlist including metadata, channel information, and content statistics.                           | `playlistId` (string)                                                                                                |
+| `getPlaylistItems`     | Get items from a YouTube playlist with pagination support, including video information and optional metadata.                                | `playlistId` (string), `maxResults` (optional number), `pageToken` (optional string), `videoDetails` (optional boolean) |
+| `searchPlaylists`      | Search for YouTube playlists using keywords and filters, returning playlist metadata and channel information.                                | `query` (string), `maxResults` (optional number), `channelId` (optional string), `regionCode` (optional string) |
+| `getChannelPlaylists`  | Get all playlists from a specific YouTube channel, including titles, descriptions, and content statistics.                                   | `channelId` (string), `maxResults` (optional number), `pageToken` (optional string) |
+
+### Playlist Management Tools
+
+| Tool Name              | Description                                                                                                                                  | Parameters (see details in tool schema)                                                                               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `createPlaylist`       | Create a new YouTube playlist with customizable title, description, privacy status, and metadata.                                           | `title` (string), `description` (optional string), `privacyStatus` (optional: "private", "unlisted", "public"), `tags` (optional array of strings), `defaultLanguage` (optional string) |
+| `updatePlaylist`       | Update an existing YouTube playlist's metadata including title, description, privacy status, and tags.                                      | `playlistId` (string), `title` (optional string), `description` (optional string), `privacyStatus` (optional: "private", "unlisted", "public"), `tags` (optional array of strings), `defaultLanguage` (optional string) |
+| `deletePlaylist`       | Delete a YouTube playlist permanently. This action cannot be undone.                                                                        | `playlistId` (string)                                                                                                |
+| `addPlaylistItem`      | Add a video to a YouTube playlist with optional position and note.                                                                          | `playlistId` (string), `videoId` (string), `position` (optional number), `note` (optional string) |
+| `removePlaylistItem`   | Remove a specific item from a YouTube playlist using its playlist item ID.                                                                  | `playlistItemId` (string)                                                                                            |
+| `reorderPlaylistItems` | Reorder items within a YouTube playlist by moving an item to a specific position.                                                          | `playlistId` (string), `playlistItemId` (string), `moveAfterId` (optional string), `moveBeforeId` (optional string) |
 
 _For detailed input parameters and their descriptions, please refer to the `inputSchema` within each tool's configuration file in the `src/tools/` directory (e.g., `src/tools/video/getVideoDetails.ts`)._
 
-> _**Note on API Quota Costs:** Most tools are highly efficient, costing only **1 unit** per call. The exceptions are the search-based tools: `searchVideos` costs **100 units** and `getChannelTopVideos` costs **101 units**. The `getTranscripts` tool has **0** API cost._
+> _**Note on API Quota Costs:** Most tools are highly efficient, costing only **1 unit** per call. The exceptions are the search-based tools: `searchVideos` costs **100 units** and `getChannelTopVideos` costs **101 units**. The `getTranscripts` tool has **0** API cost. The `findConsistentOutlierChannels` tool is a high-cost discovery tool that performs multiple API calls for comprehensive analysis._
 
 ## Advanced Usage & Local Development
 
