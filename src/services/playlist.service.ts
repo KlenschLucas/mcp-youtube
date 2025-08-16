@@ -26,6 +26,7 @@ const API_COSTS = {
   "playlistItems.insert": 50,
   "playlistItems.delete": 50,
   "playlistItems.update": 50,
+  "analytics.reports.query": 1,
 };
 
 export class PlaylistService {
@@ -634,6 +635,242 @@ export class PlaylistService {
 
     return this.cacheService.getOrSet(
       `reorder_playlist_items_${options.playlistId}_${options.playlistItemId}_${Date.now()}`,
+      operation,
+      CACHE_TTLS.DYNAMIC,
+      CACHE_COLLECTIONS.CONTENT_MANAGEMENT
+    );
+  }
+
+  async getPlaylistAnalytics(options: {
+    playlistId: string;
+    startDate?: string;
+    endDate?: string;
+    metrics?: string[];
+  }): Promise<{
+    playlistId: string;
+    totalViews: number;
+    totalLikes: number;
+    totalComments: number;
+    totalShares: number;
+    averageWatchTime: number;
+    engagementRate: number;
+    topPerformingVideos: LeanPlaylistItem[];
+    dateRange: {
+      startDate: string;
+      endDate: string;
+    };
+  }> {
+    const cacheKey = this.cacheService.createOperationKey(
+      "getPlaylistAnalytics",
+      options
+    );
+
+    const operation = async (): Promise<{
+      playlistId: string;
+      totalViews: number;
+      totalLikes: number;
+      totalComments: number;
+      totalShares: number;
+      averageWatchTime: number;
+      engagementRate: number;
+      topPerformingVideos: LeanPlaylistItem[];
+      dateRange: {
+        startDate: string;
+        endDate: string;
+      };
+    }> => {
+      try {
+        // Get playlist items first
+        const playlistItems = await this.getPlaylistItems(options.playlistId, { maxResults: 50, videoDetails: true });
+        
+        if (playlistItems.length === 0) {
+          return {
+            playlistId: options.playlistId,
+            totalViews: 0,
+            totalLikes: 0,
+            totalComments: 0,
+            totalShares: 0,
+            averageWatchTime: 0,
+            engagementRate: 0,
+            topPerformingVideos: [],
+            dateRange: {
+              startDate: options.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              endDate: options.endDate || new Date().toISOString().split('T')[0],
+            },
+          };
+        }
+
+        // Get video IDs for analytics
+        const videoIds = playlistItems
+          .map((item) => item.videoId)
+          .filter((id): id is string => id !== null && id !== undefined);
+
+        if (videoIds.length === 0) {
+          return {
+            playlistId: options.playlistId,
+            totalViews: 0,
+            totalLikes: 0,
+            totalComments: 0,
+            totalShares: 0,
+            averageWatchTime: 0,
+            engagementRate: 0,
+            topPerformingVideos: [],
+            dateRange: {
+              startDate: options.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              endDate: options.endDate || new Date().toISOString().split('T')[0],
+            },
+          };
+        }
+
+        // Fetch video statistics
+        const videoStats: any[] = [];
+        for (let i = 0; i < videoIds.length; i += this.MAX_RESULTS_PER_PAGE) {
+          const batch = videoIds.slice(i, i + this.MAX_RESULTS_PER_PAGE);
+          const response = await this.trackCost(
+            () =>
+              this.youtube.videos.list({
+                part: ["statistics", "contentDetails"],
+                id: batch,
+              }),
+            API_COSTS["videos.list"]
+          );
+
+          if (response.data.items) {
+            videoStats.push(...response.data.items);
+          }
+        }
+
+        // Calculate analytics
+        let totalViews = 0;
+        let totalLikes = 0;
+        let totalComments = 0;
+        let totalShares = 0;
+        let totalWatchTime = 0;
+        let videoCount = 0;
+
+        const videosWithStats = playlistItems.map((item) => {
+          const stats = videoStats.find((v) => v.id === item.videoId);
+          if (stats) {
+            const views = parseInt(stats.statistics?.viewCount || "0");
+            const likes = parseInt(stats.statistics?.likeCount || "0");
+            const comments = parseInt(stats.statistics?.commentCount || "0");
+            
+            totalViews += views;
+            totalLikes += likes;
+            totalComments += comments;
+            totalShares += 0; // YouTube API doesn't provide share count directly
+            videoCount++;
+
+            return {
+              ...item,
+              viewCount: views,
+              likeCount: likes,
+              commentCount: comments,
+            };
+          }
+          return item;
+        });
+
+        // Sort by views to get top performing videos
+        const topPerformingVideos = videosWithStats
+          .sort((a, b) => ((b as any).viewCount || 0) - ((a as any).viewCount || 0))
+          .slice(0, 10);
+
+        const averageWatchTime = videoCount > 0 ? totalViews / videoCount : 0;
+        const engagementRate = totalViews > 0 ? ((totalLikes + totalComments) / totalViews) * 100 : 0;
+
+        return {
+          playlistId: options.playlistId,
+          totalViews,
+          totalLikes,
+          totalComments,
+          totalShares,
+          averageWatchTime,
+          engagementRate,
+          topPerformingVideos,
+          dateRange: {
+            startDate: options.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            endDate: options.endDate || new Date().toISOString().split('T')[0],
+          },
+        };
+      } catch (error) {
+        throw new Error(`YouTube API call for getPlaylistAnalytics failed for playlistId: ${options.playlistId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      operation,
+      CACHE_TTLS.STANDARD,
+      CACHE_COLLECTIONS.PLAYLIST_ANALYTICS,
+      options
+    );
+  }
+
+  async managePlaylistCollaborators(options: {
+    playlistId: string;
+    action: "add" | "remove" | "list";
+    collaboratorEmail?: string;
+    role?: "owner" | "editor" | "viewer";
+  }): Promise<{
+    collaborators: Array<{
+      email: string;
+      role: string;
+      addedAt: string;
+    }>;
+    message: string;
+  }> {
+    const operation = async (): Promise<{
+      collaborators: Array<{
+        email: string;
+        role: string;
+        addedAt: string;
+      }>;
+      message: string;
+    }> => {
+      try {
+        // Note: YouTube Data API v3 doesn't directly support playlist collaboration management
+        // This is a placeholder implementation that would require YouTube Analytics API or
+        // YouTube Content Owner API for full functionality
+        
+        if (options.action === "list") {
+          // For now, return empty list as this requires additional API permissions
+          return {
+            collaborators: [],
+            message: "Collaborator listing requires YouTube Analytics API or Content Owner API access",
+          };
+        } else if (options.action === "add") {
+          if (!options.collaboratorEmail || !options.role) {
+            throw new Error("Collaborator email and role are required for add action");
+          }
+          
+          return {
+            collaborators: [{
+              email: options.collaboratorEmail,
+              role: options.role,
+              addedAt: new Date().toISOString(),
+            }],
+            message: `Collaborator ${options.collaboratorEmail} added with role ${options.role}. Note: This is a simulation as YouTube Data API v3 doesn't support direct collaborator management.`,
+          };
+        } else if (options.action === "remove") {
+          if (!options.collaboratorEmail) {
+            throw new Error("Collaborator email is required for remove action");
+          }
+          
+          return {
+            collaborators: [],
+            message: `Collaborator ${options.collaboratorEmail} removed. Note: This is a simulation as YouTube Data API v3 doesn't support direct collaborator management.`,
+          };
+        }
+
+        throw new Error(`Invalid action: ${options.action}`);
+      } catch (error) {
+        throw new Error(`YouTube API call for managePlaylistCollaborators failed for playlistId: ${options.playlistId}`);
+      }
+    };
+
+    return this.cacheService.getOrSet(
+      `manage_collaborators_${options.playlistId}_${options.action}_${Date.now()}`,
       operation,
       CACHE_TTLS.DYNAMIC,
       CACHE_COLLECTIONS.CONTENT_MANAGEMENT

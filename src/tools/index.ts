@@ -77,6 +77,14 @@ import {
   reorderPlaylistItemsConfig,
   reorderPlaylistItemsHandler,
 } from "./playlist/reorderPlaylistItems.js";
+import {
+  getPlaylistAnalyticsConfig,
+  getPlaylistAnalyticsHandler,
+} from "./playlist/getPlaylistAnalytics.js";
+import {
+  managePlaylistCollaboratorsConfig,
+  managePlaylistCollaboratorsHandler,
+} from "./playlist/managePlaylistCollaborators.js";
 
 import { isEnabled } from "../utils/featureFlags.js";
 
@@ -203,6 +211,17 @@ export function allTools(container: IServiceContainer): ToolDefinition[] {
       config: reorderPlaylistItemsConfig,
       handler: (params: any) =>
         reorderPlaylistItemsHandler(params, playlistService),
+    },
+    // Phase 3: Advanced features tools
+    {
+      config: getPlaylistAnalyticsConfig,
+      handler: (params: any) =>
+        getPlaylistAnalyticsHandler(params, playlistService),
+    },
+    {
+      config: managePlaylistCollaboratorsConfig,
+      handler: (params: any) =>
+        managePlaylistCollaboratorsHandler(params, playlistService),
     },
   ];
 

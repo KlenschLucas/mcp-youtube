@@ -203,3 +203,44 @@ export interface ReorderPlaylistItemsOptions {
   moveAfterId?: string;
   moveBeforeId?: string;
 }
+
+// Phase 3: Advanced features interfaces
+export interface PlaylistAnalyticsOptions {
+  playlistId: string;
+  startDate?: string;
+  endDate?: string;
+  metrics?: string[];
+}
+
+export interface PlaylistAnalytics {
+  playlistId: string;
+  totalViews: number;
+  totalLikes: number;
+  totalComments: number;
+  totalShares: number;
+  averageWatchTime: number;
+  engagementRate: number;
+  topPerformingVideos: LeanPlaylistItem[];
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
+export interface ManageCollaboratorsOptions {
+  playlistId: string;
+  action: "add" | "remove" | "list";
+  collaboratorEmail?: string;
+  role?: "owner" | "editor" | "viewer";
+}
+
+export interface CollaboratorResult {
+  collaborators: Collaborator[];
+  message: string;
+}
+
+export interface Collaborator {
+  email: string;
+  role: string;
+  addedAt: string;
+}

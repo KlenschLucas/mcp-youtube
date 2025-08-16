@@ -46,6 +46,7 @@ export const CACHE_COLLECTIONS = {
   PLAYLIST_ITEMS: "playlist_items",
   PLAYLIST_SEARCHES: "playlist_searches",
   CHANNEL_PLAYLISTS: "channel_playlists",
+  PLAYLIST_ANALYTICS: "playlist_analytics",
   
   COMMENTS: "comments",
   COMMENT_THREADS: "comment_threads",

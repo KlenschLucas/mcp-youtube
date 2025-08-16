@@ -177,3 +177,22 @@ export const reorderPlaylistItemsSchema = z.object({
   moveAfterId: z.string().optional().describe("Move item after this playlist item ID (optional)"),
   moveBeforeId: z.string().optional().describe("Move item before this playlist item ID (optional)"),
 });
+
+// Phase 3: Advanced features validation schemas
+export const playlistAnalyticsSchema = z.object({
+  playlistId: playlistIdSchema,
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format").optional(),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format").optional(),
+  metrics: z.array(z.enum(["views", "likes", "comments", "shares"])).optional(),
+});
+
+export const collaboratorRoleSchema = z
+  .enum(["owner", "editor", "viewer"])
+  .describe("Collaborator role");
+
+export const manageCollaboratorsSchema = z.object({
+  playlistId: playlistIdSchema,
+  action: z.enum(["add", "remove", "list"]).describe("Action to perform"),
+  collaboratorEmail: z.string().email().optional().describe("Email of collaborator (for add/remove actions)"),
+  role: collaboratorRoleSchema.optional().describe("Role for the collaborator"),
+});
