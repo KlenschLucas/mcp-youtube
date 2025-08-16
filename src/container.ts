@@ -5,12 +5,14 @@ import { ICacheService } from "./services/cache/cache.interface.js";
 import { CacheFactory } from "./services/cache/cache.factory.js";
 import { YoutubeService } from "./services/youtube.service.js";
 import { TranscriptService } from "./services/transcript.service.js";
+import { PlaylistService } from "./services/playlist.service.js";
 
 export interface IServiceContainer {
   db?: Db;
   cacheService: ICacheService;
   youtubeService: YoutubeService;
   transcriptService: TranscriptService;
+  playlistService: PlaylistService;
 }
 
 let container: IServiceContainer | null = null;
@@ -32,7 +34,8 @@ export async function initializeContainer(): Promise<IServiceContainer> {
 
   const youtubeService = new YoutubeService(cacheService);
   const transcriptService = new TranscriptService(cacheService);
+  const playlistService = new PlaylistService(cacheService);
 
-  container = { db, cacheService, youtubeService, transcriptService };
+  container = { db, cacheService, youtubeService, transcriptService, playlistService };
   return container;
 }

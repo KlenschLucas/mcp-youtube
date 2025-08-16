@@ -35,6 +35,25 @@ import {
   findConsistentOutlierChannelsConfig,
   findConsistentOutlierChannelsHandler,
 } from "./general/findConsistentOutlierChannels.js";
+
+// Playlist tools
+import {
+  getPlaylistDetailsConfig,
+  getPlaylistDetailsHandler,
+} from "./playlist/getPlaylistDetails.js";
+import {
+  getPlaylistItemsConfig,
+  getPlaylistItemsHandler,
+} from "./playlist/getPlaylistItems.js";
+import {
+  searchPlaylistsConfig,
+  searchPlaylistsHandler,
+} from "./playlist/searchPlaylists.js";
+import {
+  getChannelPlaylistsConfig,
+  getChannelPlaylistsHandler,
+} from "./playlist/getChannelPlaylists.js";
+
 import { isEnabled } from "../utils/featureFlags.js";
 
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -48,6 +67,9 @@ import type {
   TrendingParams,
   VideoCategoriesParams,
   FindConsistentOutlierChannelsParams,
+  PlaylistItemsOptions,
+  PlaylistSearchOptions,
+  ChannelPlaylistsOptions,
 } from "../types/tools.js";
 import { z } from "zod";
 
@@ -62,7 +84,7 @@ export interface ToolDefinition<TParams = unknown> {
 
 export function allTools(container: IServiceContainer): ToolDefinition[] {
   // 1. Get all services from the container ONCE.
-  const { youtubeService, db, transcriptService } = container;
+  const { youtubeService, db, transcriptService, playlistService } = container;
 
   // 2. Define all tools, wrapping the original handlers with the dependencies they need.
   const toolDefinitions: ToolDefinition<any>[] = [
@@ -104,6 +126,27 @@ export function allTools(container: IServiceContainer): ToolDefinition[] {
       config: getVideoCategoriesConfig,
       handler: (params: VideoCategoriesParams) =>
         getVideoCategoriesHandler(params, youtubeService),
+    },
+    // Playlist tools
+    {
+      config: getPlaylistDetailsConfig,
+      handler: (params: { playlistId: string }) =>
+        getPlaylistDetailsHandler(params, playlistService),
+    },
+    {
+      config: getPlaylistItemsConfig,
+      handler: (params: { playlistId: string } & PlaylistItemsOptions) =>
+        getPlaylistItemsHandler(params, playlistService),
+    },
+    {
+      config: searchPlaylistsConfig,
+      handler: (params: PlaylistSearchOptions) =>
+        searchPlaylistsHandler(params, playlistService),
+    },
+    {
+      config: getChannelPlaylistsConfig,
+      handler: (params: { channelId: string } & ChannelPlaylistsOptions) =>
+        getChannelPlaylistsHandler(params, playlistService),
     },
   ];
 
