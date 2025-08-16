@@ -98,7 +98,7 @@ That's it! Your MCP client should now be able to leverage the YouTube tools prov
 ### Method 1: One-click Install (Recommended)
 Click the button below to automatically configure this MCP server in Cursor:
 
-[![Install in Cursor](https://img.shields.io/badge/Install_in_Cursor-0.2.1-blue?style=for-the-badge&logo=cursor)](cursor://install-mcp?name=youtube&command=npx&args=-y,@klucas007/mcp-youtube&env.YOUTUBE_API_KEY=YOUR_API_KEY_HERE)
+[![Install in Cursor](https://img.shields.io/badge/Install_in_Cursor-0.3.0-blue?style=for-the-badge&logo=cursor)](cursor://install-mcp?name=youtube&command=npx&args=-y,@klucas007/mcp-youtube&env.YOUTUBE_API_KEY=YOUR_API_KEY_HERE)
 
 ### Method 2: Manual Configuration
 1. **Get your YouTube API key** (if you don't have one, follow the [YouTube API Setup](#youtube-api-setup) instructions below)
