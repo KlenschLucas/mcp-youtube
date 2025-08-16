@@ -57,3 +57,22 @@ export interface FindConsistentOutlierChannelsParams {
   regionCode?: string;
   maxResults?: number;
 }
+
+// Playlist-related parameter interfaces
+export interface PlaylistItemsOptions {
+  maxResults?: number;
+  pageToken?: string;
+  videoDetails?: boolean;
+}
+
+export interface PlaylistSearchOptions {
+  query: string;
+  maxResults?: number;
+  channelId?: string;
+  regionCode?: string;
+}
+
+export interface ChannelPlaylistsOptions {
+  maxResults?: number;
+  pageToken?: string;
+}

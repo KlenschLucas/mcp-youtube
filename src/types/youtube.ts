@@ -139,3 +139,34 @@ export interface CommentInfo {
     totalReplyCount: number;
   };
 }
+
+// Playlist-related lean response interfaces
+export interface LeanPlaylistDetails {
+  id: string | null | undefined;
+  title: string | null | undefined;
+  description?: string | null | undefined;
+  channelId: string | null | undefined;
+  channelTitle: string | null | undefined;
+  publishedAt: string | null | undefined;
+  itemCount: number | null | undefined;
+  privacyStatus: string | null | undefined;
+}
+
+export interface LeanPlaylistItem {
+  videoId: string | null | undefined;
+  title: string | null | undefined;
+  channelTitle: string | null | undefined;
+  position: number | null | undefined;
+  publishedAt: string | null | undefined;
+  duration: string | null | undefined;
+}
+
+export interface LeanPlaylistSearchResult {
+  playlistId: string | null | undefined;
+  title: string | null | undefined;
+  description?: string | null | undefined;
+  channelId: string | null | undefined;
+  channelTitle: string | null | undefined;
+  publishedAt: string | null | undefined;
+  itemCount: number | null | undefined;
+}
